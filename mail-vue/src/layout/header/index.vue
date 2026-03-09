@@ -16,6 +16,23 @@
       <div v-else class="dark-icon icon-item" @click="openDark($event)">
         <Icon icon="solar:moon-linear"/>
       </div>
+      <el-dropdown trigger="click" @command="changeLang" :teleported="false" popper-class="lang-dropdown">
+        <div class="translate icon-item">
+          <Icon icon="carbon:translate"/>
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+                v-for="item in languageOptions"
+                :key="item.value"
+                :command="item.value"
+                :class="settingStore.lang === item.value ? 'lang-active' : ''"
+            >
+              {{ item.label }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <div class="notice icon-item" @click="openNotice">
         <Icon icon="streamline-plump:announcement-megaphone"/>
       </div>
@@ -94,6 +111,16 @@ const uiStore = useUiStore();
 const logoutLoading = ref(false)
 const userInfoShow = ref(false)
 const userinfoRef = ref({})
+const languageOptions = [
+  {
+    label: '简体中文',
+    value: 'zh',
+  },
+  {
+    label: 'English',
+    value: 'en',
+  },
+]
 
 const accountCount = computed(() => {
   return userStore.user.role.accountCount
@@ -183,6 +210,9 @@ async function copyEmail(email) {
 }
 
 function changeLang(lang) {
+  if (settingStore.lang === lang) {
+    return
+  }
   setExtend(lang === 'en' ? 'en' : 'zh-cn')
   settingStore.lang = lang
 }
@@ -258,6 +288,11 @@ function formatName(email) {
 <style>
 .detail-dropdown {
   color: var(--el-text-color-primary) !important;
+}
+
+.lang-dropdown .lang-active {
+  color: var(--el-color-primary) !important;
+  font-weight: 600;
 }
 </style>
 <style lang="scss" scoped>
@@ -444,6 +479,10 @@ function formatName(email) {
 
   .sun-icon {
     font-size: 24px;
+  }
+
+  .translate {
+    font-size: 22px;
   }
 
   .avatar {
